@@ -344,7 +344,7 @@ textarea:focus {
         const id = row.data('id');
 
         $.ajax({
-          url: `https://skyview-server-3.vercel.app/api/todo/task/${id}`,
+          url: `https://skyview-server-4-0.vercel.app/api/todo/task/${id}`,
           method: 'PUT',
           contentType: 'application/json',
           data: JSON.stringify({ status: 'Completed' }),
@@ -363,7 +363,7 @@ textarea:focus {
         const id = row.data('id');
 
         $.ajax({
-          url: `https://skyview-server-3.vercel.app/api/todo/task/${id}`,
+          url: `https://skyview-server-4-0.vercel.app/api/todo/task/${id}`,
           method: 'DELETE',
           success: function () {
             loadTasks();
