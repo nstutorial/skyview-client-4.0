@@ -468,7 +468,7 @@ button#fetchRoutineBtn:hover {
             console.log("Sending Routine:", routinePayload); // Log to console
 
             fetch(
-              "https://skyview-server-3.vercel.app/api/routines/save-routine",
+              "https://skyview-server-4-0.vercel.app/api/routines/save-routine",
               {
                 method: "POST",
                 headers: {
@@ -644,7 +644,7 @@ button#fetchRoutineBtn:hover {
         const selectedDay = dropdown.value;
       
         fetch(
-          `https://skyview-server-3.vercel.app/api/routines/get-routine?day=${selectedDay}`
+          `https://skyview-server-4-0.vercel.app/api/routines/get-routine?day=${selectedDay}`
         )
           .then((response) => {
             if (!response.ok) {
@@ -746,3 +746,4 @@ button#fetchRoutineBtn:hover {
     </script>
   </body>
 </html>
+
