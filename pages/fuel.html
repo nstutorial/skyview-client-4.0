@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Fuel Management</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f5f5f5;
+}
+
+.header {
+  background: #0b5ed7;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-size: 22px;
+}
+
+.tabs {
+  display: flex;
+  background: #222;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  background: #333;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.tab-btn:hover {
+  background: #555;
+}
+
+.tab-btn.active {
+  background: #0b5ed7;
+}
+
+.tab-content {
+  display: none;
+  padding: 20px;
+  background: white;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+}
+
+button.save-btn {
+  background: green;
+  color: white;
+  padding: 12px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid #ccc;
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+}
+
+.summary-box {
+  font-size: 18px;
+  margin: 10px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">Fuel Management System</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="openTab('entry')">Fuel Entry</button>
+  <button class="tab-btn" onclick="openTab('summary')">Summary</button>
+  <button class="tab-btn" onclick="openTab('ledger')">Ledger</button>
+</div>
+
+<!-- ================= ENTRY TAB ================= -->
+
+<div id="entry" class="tab-content" style="display:block">
+
+<h3>Fuel Entry Form</h3>
+
+<input type="date" id="date">
+<input type="text" id="center" placeholder="Fuel Center Name">
+<input type="text" id="vehicle" placeholder="Vehicle No">
+<input type="number" id="km" placeholder="KM Reading">
+<input type="number" id="volume" placeholder="Billed Volume (Liters)">
+<input type="number" id="bill" placeholder="Bill Amount">
+<input type="number" id="paid" placeholder="Paid Amount">
+
+<button class="save-btn" onclick="saveEntry()">Save Entry</button>
+
+</div>
+
+<!-- ================= SUMMARY TAB ================= -->
+
+<div id="summary" class="tab-content">
+
+<h3>Summary</h3>
+
+<div class="summary-box">Total Entries: <span id="totalEntries">0</span></div>
+<div class="summary-box">Total Volume: <span id="totalVolume">0</span></div>
+<div class="summary-box">Total Bill: ₹ <span id="totalBill">0</span></div>
+<div class="summary-box">Total Paid: ₹ <span id="totalPaid">0</span></div>
+<div class="summary-box">Balance: ₹ <span id="totalBalance">0</span></div>
+
+</div>
+
+<!-- ================= LEDGER TAB ================= -->
+
+div id="ledger" class="tab-content">
+
+<h3>Ledger</h3>
+
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Center</th>
+<th>Vehicle</th>
+<th>KM</th>
+<th>Volume</th>
+<th>Bill</th>
+<th>Paid</th>
+<th>Balance</th>
+</tr>
+</thead>
+
+<tbody id="ledgerBody"></tbody>
+</table>
+
+</div>
+
+<script>
+
+function openTab(tabId) {
+  document.querySelectorAll(".tab-content").forEach(t => t.style.display = "none");
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById(tabId).style.display = "block";
+  event.target.classList.add("active");
+
+  if(tabId === "summary") loadSummary();
+  if(tabId === "ledger") loadLedger();
+}
+
+function getData() {
+  return JSON.parse(localStorage.getItem("fuelData") || "[]");
+}
+
+function saveEntry() {
+  const entry = {
+    date: date.value,
+    center: center.value,
+    vehicle: vehicle.value,
+    km: km.value,
+    volume: Number(volume.value),
+    bill: Number(bill.value),
+    paid: Number(paid.value)
+  };
+
+  let data = getData();
+  data.push(entry);
+  localStorage.setItem("fuelData", JSON.stringify(data));
+
+  alert("Saved successfully");
+
+  document.querySelectorAll("#entry input").forEach(i => i.value="");
+}
+
+function loadSummary() {
+  let data = getData();
+
+  let totalVol = 0, totalBill = 0, totalPaid = 0;
+
+  data.forEach(d => {
+    totalVol += d.volume;
+    totalBill += d.bill;
+    totalPaid += d.paid;
+  });
+
+  totalEntries.innerText = data.length;
+  totalVolume.innerText = totalVol.toFixed(2);
+  totalBill.innerText = totalBill.toFixed(2);
+  totalPaid.innerText = totalPaid.toFixed(2);
+  totalBalance.innerText = (totalBill - totalPaid).toFixed(2);
+}
+
+function loadLedger() {
+  let data = getData();
+  ledgerBody.innerHTML = "";
+
+  data.forEach(d => {
+    let bal = d.bill - d.paid;
+
+    ledgerBody.innerHTML += `
+      <tr>
+        <td>${d.date}</td>
+        <td>${d.center}</td>
+        <td>${d.vehicle}</td>
+        <td>${d.km}</td>
+        <td>${d.volume}</td>
+        <td>${d.bill}</td>
+        <td>${d.paid}</td>
+        <td>${bal}</td>
+      </tr>`;
+  });
+}
+
+</script>
+
+</body>
+</html>
