@@ -467,7 +467,7 @@ function loadTasks() {
   completedTable.clear();
 
   $.ajax({
-    url: 'https://skyview-server-3.vercel.app/api/todo/tasks',
+    url: 'https://skyview-server-4-0.vercel.app/api/todo/tasks',
     method: 'GET',
     success: function (tasks) {
       tasks.forEach(task => {
@@ -512,7 +512,7 @@ $(document).ready(function () {
     }
 
     $.ajax({
-      url: 'https://skyview-server-3.vercel.app/api/todo/add-task',
+      url: 'https://skyview-server-4-0.vercel.app/api/todo/add-task',
       method: 'POST',
       contentType: 'application/json',
       data: JSON.stringify({ task: task, date: date, status: 'Pending' }),
@@ -533,7 +533,7 @@ $(document).ready(function () {
     const id = row.data('id');
 
     $.ajax({
-      url: `https://skyview-server-3.vercel.app/api/todo/task/${id}`,
+      url: `https://skyview-server-4-0.vercel.app/api/todo/task/${id}`,
       method: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({ status: 'Completed' }),
@@ -556,7 +556,7 @@ $(document).ready(function () {
       return;
     }
     $.ajax({
-      url: `https://skyview-server-3.vercel.app/api/todo/task/${id}`,
+      url: `https://skyview-server-4-0.vercel.app/api/todo/task/${id}`,
       method: 'DELETE',
       success: function () {
         loadTasks();
@@ -597,7 +597,7 @@ $(document).ready(function () {
     }
 
     $.ajax({
-      url: `https://skyview-server-3.vercel.app/api/todo/task/${id}`,
+      url: `https://skyview-server-4-0.vercel.app/api/todo/task/${id}`,
       method: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({ task: newTask, date: newDate }),
