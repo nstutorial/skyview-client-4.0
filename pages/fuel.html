@@ -1,232 +1,235 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Fuel Management</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fuel Entry System</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #f5f5f5;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    padding: 30px;
 }
 
-.header {
-  background: #0b5ed7;
-  color: white;
-  padding: 15px;
-  text-align: center;
-  font-size: 22px;
+.container {
+    max-width: 1100px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-.tabs {
-  display: flex;
-  background: #222;
+h2 {
+    text-align: center;
+    color: #2a5298;
 }
 
-.tab-btn {
-  flex: 1;
-  padding: 14px;
-  border: none;
-  background: #333;
-  color: white;
-  cursor: pointer;
-  font-size: 16px;
+form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
 }
 
-.tab-btn:hover {
-  background: #555;
+input, select, textarea {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
 
-.tab-btn.active {
-  background: #0b5ed7;
+textarea {
+    resize: none;
 }
 
-.tab-content {
-  display: none;
-  padding: 20px;
-  background: white;
+button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
 }
 
-input {
-  width: 100%;
-  padding: 10px;
-  margin: 6px 0;
+.submit-btn {
+    background: #2a5298;
+    color: white;
 }
 
-button.save-btn {
-  background: green;
-  color: white;
-  padding: 12px;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  font-size: 16px;
+.edit-btn {
+    background: #ffc107;
+}
+
+.delete-btn {
+    background: #dc3545;
+    color: white;
 }
 
 table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table, th, td {
-  border: 1px solid #ccc;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
 }
 
 th, td {
-  padding: 8px;
-  text-align: center;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
 }
 
-.summary-box {
-  font-size: 18px;
-  margin: 10px 0;
+th {
+    background: #2a5298;
+    color: white;
+}
+
+.pagination {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.pagination button {
+    margin: 3px;
+    background: #2a5298;
+    color: white;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">Fuel Management System</div>
+<div class="container">
+    <h2>Fuel Entry System</h2>
 
-<div class="tabs">
-  <button class="tab-btn active" onclick="openTab('entry')">Fuel Entry</button>
-  <button class="tab-btn" onclick="openTab('summary')">Summary</button>
-  <button class="tab-btn" onclick="openTab('ledger')">Ledger</button>
-</div>
+    <form id="fuelForm">
+        <select id="fuelCenter" required>
+            <option value="">Fuel Center</option>
+            <option>Indian Oil</option>
+            <option>HP Petrol Pump</option>
+            <option>Bharat Petroleum</option>
+        </select>
 
-<!-- ================= ENTRY TAB ================= -->
+        <input type="text" id="vehicleNo" placeholder="Vehicle No" required>
+        <input type="date" id="date" required>
+        <input type="text" id="billNo" placeholder="Bill No" required>
+        <input type="number" id="billAmount" placeholder="Bill Amount" required>
+        <input type="number" id="paidAmount" placeholder="Paid Amount" required>
+        <input type="text" id="remarks" placeholder="Remarks">
+        <button type="submit" class="submit-btn">Add Entry</button>
+    </form>
 
-<div id="entry" class="tab-content" style="display:block">
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Fuel Center</th>
+                <th>Vehicle No</th>
+                <th>Date</th>
+                <th>Bill No</th>
+                <th>Bill Amt</th>
+                <th>Paid Amt</th>
+                <th>Balance</th>
+                <th>Remarks</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
 
-<h3>Fuel Entry Form</h3>
-
-<input type="date" id="date">
-<input type="text" id="center" placeholder="Fuel Center Name">
-<input type="text" id="vehicle" placeholder="Vehicle No">
-<input type="number" id="km" placeholder="KM Reading">
-<input type="number" id="volume" placeholder="Billed Volume (Liters)">
-<input type="number" id="bill" placeholder="Bill Amount">
-<input type="number" id="paid" placeholder="Paid Amount">
-
-<button class="save-btn" onclick="saveEntry()">Save Entry</button>
-
-</div>
-
-<!-- ================= SUMMARY TAB ================= -->
-
-<div id="summary" class="tab-content">
-
-<h3>Summary</h3>
-
-<div class="summary-box">Total Entries: <span id="totalEntries">0</span></div>
-<div class="summary-box">Total Volume: <span id="totalVolume">0</span></div>
-<div class="summary-box">Total Bill: ₹ <span id="totalBill">0</span></div>
-<div class="summary-box">Total Paid: ₹ <span id="totalPaid">0</span></div>
-<div class="summary-box">Balance: ₹ <span id="totalBalance">0</span></div>
-
-</div>
-
-<!-- ================= LEDGER TAB ================= -->
-
-div id="ledger" class="tab-content">
-
-<h3>Ledger</h3>
-
-<table>
-<thead>
-<tr>
-<th>Date</th>
-<th>Center</th>
-<th>Vehicle</th>
-<th>KM</th>
-<th>Volume</th>
-<th>Bill</th>
-<th>Paid</th>
-<th>Balance</th>
-</tr>
-</thead>
-
-<tbody id="ledgerBody"></tbody>
-</table>
-
+    <div class="pagination" id="pagination"></div>
 </div>
 
 <script>
+let entries = [];
+let currentPage = 1;
+const rowsPerPage = 5;
 
-function openTab(tabId) {
-  document.querySelectorAll(".tab-content").forEach(t => t.style.display = "none");
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-  document.getElementById(tabId).style.display = "block";
-  event.target.classList.add("active");
+document.getElementById("fuelForm").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-  if(tabId === "summary") loadSummary();
-  if(tabId === "ledger") loadLedger();
+    let entry = {
+        fuelCenter: fuelCenter.value,
+        vehicleNo: vehicleNo.value,
+        date: date.value,
+        billNo: billNo.value,
+        billAmount: parseFloat(billAmount.value),
+        paidAmount: parseFloat(paidAmount.value),
+        remarks: remarks.value
+    };
+
+    entries.push(entry);
+    this.reset();
+    renderTable();
+});
+
+function renderTable() {
+    let tableBody = document.getElementById("tableBody");
+    tableBody.innerHTML = "";
+
+    let start = (currentPage - 1) * rowsPerPage;
+    let end = start + rowsPerPage;
+    let paginatedItems = entries.slice(start, end);
+
+    paginatedItems.forEach((entry, index) => {
+        let balance = entry.billAmount - entry.paidAmount;
+
+        tableBody.innerHTML += `
+        <tr>
+            <td>${start + index + 1}</td>
+            <td>${entry.fuelCenter}</td>
+            <td>${entry.vehicleNo}</td>
+            <td>${entry.date}</td>
+            <td>${entry.billNo}</td>
+            <td>₹${entry.billAmount}</td>
+            <td>₹${entry.paidAmount}</td>
+            <td>₹${balance}</td>
+            <td>${entry.remarks}</td>
+            <td>
+                <button class="edit-btn" onclick="editEntry(${start + index})">Edit</button>
+                <button class="delete-btn" onclick="deleteEntry(${start + index})">Delete</button>
+            </td>
+        </tr>`;
+    });
+
+    renderPagination();
 }
 
-function getData() {
-  return JSON.parse(localStorage.getItem("fuelData") || "[]");
+function renderPagination() {
+    let pagination = document.getElementById("pagination");
+    pagination.innerHTML = "";
+    let pageCount = Math.ceil(entries.length / rowsPerPage);
+
+    for (let i = 1; i <= pageCount; i++) {
+        pagination.innerHTML += `<button onclick="goToPage(${i})">${i}</button>`;
+    }
 }
 
-function saveEntry() {
-  const entry = {
-    date: date.value,
-    center: center.value,
-    vehicle: vehicle.value,
-    km: km.value,
-    volume: Number(volume.value),
-    bill: Number(bill.value),
-    paid: Number(paid.value)
-  };
-
-  let data = getData();
-  data.push(entry);
-  localStorage.setItem("fuelData", JSON.stringify(data));
-
-  alert("Saved successfully");
-
-  document.querySelectorAll("#entry input").forEach(i => i.value="");
+function goToPage(page) {
+    currentPage = page;
+    renderTable();
 }
 
-function loadSummary() {
-  let data = getData();
-
-  let totalVol = 0, totalBill = 0, totalPaid = 0;
-
-  data.forEach(d => {
-    totalVol += d.volume;
-    totalBill += d.bill;
-    totalPaid += d.paid;
-  });
-
-  totalEntries.innerText = data.length;
-  totalVolume.innerText = totalVol.toFixed(2);
-  totalBill.innerText = totalBill.toFixed(2);
-  totalPaid.innerText = totalPaid.toFixed(2);
-  totalBalance.innerText = (totalBill - totalPaid).toFixed(2);
+function deleteEntry(index) {
+    entries.splice(index, 1);
+    renderTable();
 }
 
-function loadLedger() {
-  let data = getData();
-  ledgerBody.innerHTML = "";
+function editEntry(index) {
+    let entry = entries[index];
 
-  data.forEach(d => {
-    let bal = d.bill - d.paid;
+    fuelCenter.value = entry.fuelCenter;
+    vehicleNo.value = entry.vehicleNo;
+    date.value = entry.date;
+    billNo.value = entry.billNo;
+    billAmount.value = entry.billAmount;
+    paidAmount.value = entry.paidAmount;
+    remarks.value = entry.remarks;
 
-    ledgerBody.innerHTML += `
-      <tr>
-        <td>${d.date}</td>
-        <td>${d.center}</td>
-        <td>${d.vehicle}</td>
-        <td>${d.km}</td>
-        <td>${d.volume}</td>
-        <td>${d.bill}</td>
-        <td>${d.paid}</td>
-        <td>${bal}</td>
-      </tr>`;
-  });
+    entries.splice(index, 1);
+    renderTable();
 }
-
 </script>
 
 </body>
