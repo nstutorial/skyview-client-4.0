@@ -468,7 +468,7 @@ button#fetchRoutineBtn:hover {
             console.log("Sending Routine:", routinePayload); // Log to console
 
             fetch(
-              "https://skyview-server-4-0.vercel.app/api/routines/save-routine",
+              "https://skyview-server-3.vercel.app/api/routines/save-routine",
               {
                 method: "POST",
                 headers: {
@@ -644,7 +644,7 @@ button#fetchRoutineBtn:hover {
         const selectedDay = dropdown.value;
       
         fetch(
-          `https://skyview-server-4-0.vercel.app/api/routines/get-routine?day=${selectedDay}`
+          `https://skyview-server-3.vercel.app/api/routines/get-routine?day=${selectedDay}`
         )
           .then((response) => {
             if (!response.ok) {
@@ -656,7 +656,92 @@ button#fetchRoutineBtn:hover {
           })
           .then((data) => {
             console.log("Fetched Routine Data:", data);
-            
+
+            // Clear existing tables
+            tablesContainer.innerHTML = "";
+
+            // Normalize response into an array of routines
+            let routinesArray = [];
+
+            if (Array.isArray(data)) {
+              routinesArray = data;
+            } else if (Array.isArray(data.routines)) {
+              routinesArray = data.routines;
+            } else if (data.routine) {
+              routinesArray = Array.isArray(data.routine)
+                ? data.routine
+                : [data.routine];
+            }
+
+            if (!routinesArray || routinesArray.length === 0) {
+              tablesContainer.innerHTML = `<p class="error-message">No routine found for ${selectedDay}.</p>`;
+              return;
+            }
+
+            routinesArray.forEach((routineItem) => {
+              const cls =
+                routineItem.class ||
+                routineItem.className ||
+                routineItem.class_id ||
+                "Unknown Class";
+
+              // For this selected day, try to extract an array of periods
+              let periods = [];
+              if (Array.isArray(routineItem.periods)) {
+                periods = routineItem.periods;
+              } else if (
+                routineItem.routines &&
+                Array.isArray(routineItem.routines[selectedDay])
+              ) {
+                periods = routineItem.routines[selectedDay];
+              }
+
+              if (!periods || periods.length === 0) return;
+
+              const classTitle = document.createElement("h2");
+              classTitle.textContent = `Class: ${cls} (${selectedDay})`;
+
+              const wrapper = document.createElement("div");
+              const table = document.createElement("table");
+              const thead = document.createElement("thead");
+              thead.innerHTML = `
+                <tr>
+                  <th>Period</th>
+                  <th>Time</th>
+                  <th>Teacher</th>
+                  <th>Subject</th>
+                  <th>Books Name</th>
+                </tr>`;
+              table.appendChild(thead);
+
+              const tbody = document.createElement("tbody");
+
+              periods.forEach((p) => {
+                // Skip break rows here; UI break row is already known in allPeriods if needed
+                if (p.period === "Break") {
+                  const breakRow = document.createElement("tr");
+                  breakRow.className = "break-row";
+                  breakRow.innerHTML = `<td colspan="5" class="break-row">Break Time (${p.time || ""})</td>`;
+                  tbody.appendChild(breakRow);
+                  return;
+                }
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                  <td>${p.period || ""}</td>
+                  <td>${p.time || ""}</td>
+                  <td>${p.teacher || ""}</td>
+                  <td>${p.subject || ""}</td>
+                  <td>${p.book || ""}</td>
+                `;
+                tbody.appendChild(row);
+              });
+
+              table.appendChild(tbody);
+              wrapper.appendChild(classTitle);
+              wrapper.appendChild(table);
+              tablesContainer.appendChild(wrapper);
+            });
           })
           .catch((error) => {
             console.error("Error fetching routine:", error);
