@@ -1,448 +1,748 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Class Routine Manager</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <style>
-    body { 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .container {
-      background: white;
-      border-radius: 10px;
-      padding: 30px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      max-width: 1000px;
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #333;
-    }
-    .section {
-      margin-bottom: 30px;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      border-left: 4px solid #667eea;
-    }
-    .period-item {
-      background: white;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    .period-item input {
-      flex: 1;
-    }
-    .btn-custom {
-      background: #667eea;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .btn-custom:hover {
-      background: #764ba2;
-      color: white;
-    }
-    .btn-danger-custom {
-      background: #dc3545;
-    }
-    .btn-danger-custom:hover {
-      background: #c82333;
-    }
-    .btn-success-custom {
-      background: #28a745;
-    }
-    .btn-success-custom:hover {
-      background: #218838;
-    }
-    .alert-box {
-      padding: 15px;
-      border-radius: 5px;
-      margin-top: 10px;
-      display: none;
-    }
-    .alert-success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-    .alert-error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-    .alert-box.show {
-      display: block;
-    }
-    select, input {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 14px;
-    }
-    .table-container {
-      margin-top: 20px;
-      overflow-x: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background: #667eea;
-      color: white;
-      font-weight: bold;
-    }
-    tr:hover {
-      background: #f5f5f5;
-    }
-  </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>School Routine - Monday</title>
+    <style>
+     body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #eef1f5;
+  padding: 20px;
+  margin: 0;
+  color: #333;
+}
 
-<div class="container">
-  <div class="header">
-    <h1><i class="fas fa-calendar-alt"></i> Class Routine Manager</h1>
-    <p>Manage and view class schedules</p>
-  </div>
+.container {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
 
-  <!-- Save Routine Section -->
-  <div class="section">
-    <h2><i class="fas fa-save"></i> Save New Routine</h2>
-    
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <label for="classInput">Class Name:</label>
-        <input type="text" id="classInput" placeholder="e.g., Nursery-A" class="form-control">
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+h2 {
+  margin-top: 40px;
+  margin-bottom: 15px;
+  color: #2d3436;
+  font-size: 1.5rem;
+  border-bottom: 2px solid #dfe6e9;
+  padding-bottom: 6px;
+}
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 10px;
+      }
+      thead {
+        background-color: #4caf50;
+        color: white;
+      }
+      th,
+      td {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid #ccc;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      .break-row td {
+        background-color: #ffe4b2;
+        font-weight: bold;
+        text-align: center;
+      }
+      select:disabled,
+      input:disabled {
+        background-color: #ddd;
+      }
+      .settings {
+  margin-bottom: 30px;
+  background-color: #f1f3f5;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+}
+
+.settings label {
+  font-weight: 500;
+  color: #34495e;
+}
+
+.settings input[type="number"] {
+  width: 70px;
+}
+
+.action-buttons {
+  margin-top: 20px;
+  margin-bottom: 40px;
+  display: flex;
+  gap: 10px;
+}
+
+.action-buttons button {
+  background-color: #3498db;
+  color: white;
+  padding: 8px 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.action-buttons button:hover {
+  background-color: #2e86de;
+}
+
+label[for="days"] {
+  font-weight: 500;
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+select#days {
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  background-color: white;
+  min-width: 180px;
+  margin-right: 15px;
+}
+
+button#exportExcelBtn,
+button#exportExcelBtnt,
+button#fetchRoutineBtn { /* Added fetchRoutineBtn here for consistent styling */
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: white;
+  background-color: #27ae60; /* Default green, will be overridden by specific IDs */
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;      /* Consistent margin */
+  margin-right: 10px;    /* Consistent margin */
+  transition: background-color 0.2s ease-in-out;
+}
+
+button#exportExcelBtnt {
+  background-color: #f39c12;
+}
+
+button#fetchRoutineBtn { /* Specific style for fetch button */
+  background-color: #2980b9;
+}
+
+button#exportExcelBtn:hover {
+  background-color: #1e8449;
+}
+button#exportExcelBtnt:hover {
+  background-color: #d68910;
+}
+button#fetchRoutineBtn:hover {
+  background-color: #21618c;
+}
+#generateRoutineBtn{
+    background-color: #8e44ad;
+    color: white;
+    padding: 8px 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="settings" id="settings"></div>
+      <div>
+        <label
+          ><input type="checkbox" id="teacherCheck" checked /> Teacher</label
+        >
+        <label><input type="checkbox" id="subjectCheck" /> Subject</label>
+        <label><input type="checkbox" id="bookCheck" /> Book</label>
+        <button id="exportExcelBtn">Export Excel</button>
+        <button id="exportExcelBtnt">Export Excel teacher rotine</button>
       </div>
-      <div class="col-md-4">
-        <label for="daySelect">Day:</label>
-        <select id="daySelect" class="form-control">
-          <option value="">Select Day</option>
-          <option value="Monday">Monday</option>
-          <option value="Tuesday">Tuesday</option>
-          <option value="Wednesday">Wednesday</option>
-          <option value="Thursday">Thursday</option>
-          <option value="Friday">Friday</option>
-          <option value="Saturday">Saturday</option>
-        </select>
-      </div>
+      <h1 id="routine-heading">School Routine - Monday</h1>
+
+      <label for="days">Choose a day:</label>
+      <select id="days">
+        <!-- Options will be added by JavaScript -->
+      </select>
+
+      <div id="routineTables"></div>
     </div>
 
-    <div id="periodsContainer"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-    <button class="btn btn-custom" onclick="addPeriod()">
-      <i class="fas fa-plus"></i> Add Period
-    </button>
-    <button class="btn btn-success-custom" id="saveBtn" onclick="saveRoutine()">
-      <i class="fas fa-save"></i> Save Routine
-    </button>
+    <script>
+      const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday","Saturday", "Sunday"];
+      const dropdown = document.getElementById("days");
+      const heading = document.getElementById("routine-heading");
 
-    <div id="saveAlert" class="alert-box"></div>
-  </div>
-
-  <!-- Fetch Routine Section -->
-  <div class="section">
-    <h2><i class="fas fa-search"></i> View Routine</h2>
-    
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <label for="fetchDaySelect">Select Day:</label>
-        <select id="fetchDaySelect" class="form-control">
-          <option value="">Select Day</option>
-          <option value="Monday">Monday</option>
-          <option value="Tuesday">Tuesday</option>
-          <option value="Wednesday">Wednesday</option>
-          <option value="Thursday">Thursday</option>
-          <option value="Friday">Friday</option>
-          <option value="Saturday">Saturday</option>
-        </select>
-      </div>
-    </div>
-
-    <button class="btn btn-custom" id="fetchRoutineBtn" onclick="fetchRoutine()">
-      <i class="fas fa-search"></i> Fetch Routine
-    </button>
-
-    <div id="fetchAlert" class="alert-box"></div>
-    <div id="routineTableContainer" class="table-container"></div>
-  </div>
-</div>
-
-<script src="js/config.js"></script>
-<script>
-  // FIXED: Proper token retrieval using CONFIG storage keys
-  function getAuthToken() {
-    const token = localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN);
-    if (!token) {
-      console.error('No authentication token found');
-      showAlert('fetchAlert', 'Authentication required. Please login first.', 'error');
-      setTimeout(() => {
-        window.location.href = 'pages/login.html';
-      }, 2000);
-      return null;
-    }
-    return token;
-  }
-
-  function showAlert(elementId, message, type) {
-    const alertBox = document.getElementById(elementId);
-    alertBox.textContent = message;
-    alertBox.className = `alert-box show alert-${type}`;
-    setTimeout(() => {
-      alertBox.classList.remove('show');
-    }, 5000);
-  }
-
-  function addPeriod() {
-    const container = document.getElementById('periodsContainer');
-    const periodCount = container.children.length + 1;
-    
-    const periodItem = document.createElement('div');
-    periodItem.className = 'period-item';
-    periodItem.innerHTML = `
-      <label style="min-width: 100px;">Period ${periodCount}</label>
-      <input type="text" placeholder="Period Name" class="period-name">
-      <input type="time" placeholder="Start Time" class="period-time">
-      <input type="text" placeholder="Subject" class="period-subject">
-      <input type="text" placeholder="Teacher" class="period-teacher">
-      <button type="button" class="btn btn-danger-custom" onclick="this.parentElement.remove()">
-        <i class="fas fa-trash"></i>
-      </button>
-    `;
-    container.appendChild(periodItem);
-  }
-
-  async function saveRoutine() {
-    const classInput = document.getElementById('classInput');
-    const daySelect = document.getElementById('daySelect');
-    const periodsContainer = document.getElementById('periodsContainer');
-    const saveAlert = document.getElementById('saveAlert');
-
-    // Validation
-    if (!classInput.value.trim()) {
-      showAlert('saveAlert', 'Please enter a class name.', 'error');
-      return;
-    }
-
-    if (!daySelect.value) {
-      showAlert('saveAlert', 'Please select a day.', 'error');
-      return;
-    }
-
-    if (periodsContainer.children.length === 0) {
-      showAlert('saveAlert', 'Please add at least one period.', 'error');
-      return;
-    }
-
-    // Collect periods data
-    const periods = [];
-    periodsContainer.querySelectorAll('.period-item').forEach(item => {
-      const period = {
-        name: item.querySelector('.period-name').value,
-        time: item.querySelector('.period-time').value,
-        subject: item.querySelector('.period-subject').value,
-        teacher: item.querySelector('.period-teacher').value
-      };
-      periods.push(period);
-    });
-
-    // Get token
-    const token = getAuthToken();
-    if (!token) return;
-
-    try {
-      console.log('Sending Routine:', {
-        class: classInput.value,
-        day: daySelect.value,
-        periods: periods
+      // Populate dropdown
+      days.forEach((day) => {
+        const option = document.createElement("option");
+        option.value = day;
+        option.textContent = day;
+        dropdown.appendChild(option);
       });
 
-      // FIXED: Correct authentication header with Bearer token
-      const response = await fetch(
-        `${CONFIG.API_URL}/routines/save-routine`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // FIXED: Proper Bearer token format
-          },
-          body: JSON.stringify({
-            class: classInput.value,
-            day: daySelect.value,
-            periods: periods
-          })
-        }
-      );
+      // Set default value
+      dropdown.value = "Monday";
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      // Update heading on change
+      dropdown.addEventListener("change", () => {
+        heading.textContent = `School Routine - ${dropdown.value}`;
+      });
+
+      const teachers = [
+        "Amrita",
+        "Ankita",
+        "Shubhra",
+        "New Teacher",
+        "Supriya",
+        "Sneha",
+        "Sumitra",
+        "Mainak",
+        "Madhumita",
+        "Moumita Suvam",
+        "Ranjit",
+        "Sujata",
+      ];
+      const subjects = [
+        "Math",
+        "English",
+        "Science",
+        "Bengali/ Hindi",
+        "SST",
+        "GK",
+        "Computer",
+        "EVS",
+        "Moral Value",
+        "3rd Lang. Hindi",
+        "Communication",
+        "Yoga",
+        "Rhymes",
+        "Drawing",
+        "Music/Dance",
+        "Reading Writing Skill",
+        "Library",
+        "Games",
+        "SUPW",
+        "House-WISE",
+        "Cursive",
+        "English-Gr.",
+      ];
+      const allPeriods = [
+        { period: "1st", time: "10.25 - 11.05" },
+        { period: "2nd", time: "11.05 - 11.45" },
+        { period: "3rd", time: "11.45 - 12.25" },
+        { period: "Break", time: "12.25 - 12.50" },
+        { period: "4th", time: "12.50 - 01.30" },
+        { period: "5th", time: "01.30 - 02.05" },
+        { period: "6th", time: "02.05 - 02.40" },
+        { period: "7th", time: "02.40 - 03.15" },
+      ];
+      const classes = [
+        "Nursery-A",
+        "LKG-A",
+        "LKG-B",
+        "UKG-A",
+        "UKG-B",
+        "Class 1",
+        "Class 2",
+        "Class 3",
+        "Class 4",
+        "Class 5",
+      ];
+      const settingsDiv = document.getElementById("settings");
+      const tablesContainer = document.getElementById("routineTables");
+
+      function createSettings() {
+        classes.forEach((cls) => {
+          const label = document.createElement("label");
+          label.innerHTML = `${cls} Periods: `;
+          const input = document.createElement("input");
+          input.type = "number";
+          input.id = `${cls.replace(/\s/g, "")}Periods`;
+          input.value = 6;
+          input.min = 1;
+          input.max = 10;
+          label.appendChild(input);
+          settingsDiv.appendChild(label);
+        });
+        const btn = document.createElement("button");
+        btn.textContent = "Generate Routine";
+        btn.id = "generateRoutineBtn";
+        btn.onclick = generateRoutine;
+        settingsDiv.appendChild(btn);
       }
 
-      const data = await response.json();
-      console.log('Routine saved:', data);
+      function generateRoutine() {
+        tablesContainer.innerHTML = "";
+        const periodLimits = {};
+        const teacherCount = {};
 
-      showAlert('saveAlert', '✓ Routine saved successfully!', 'success');
+        classes.forEach((cls) => {
+          const id = `${cls.replace(/\s/g, "")}Periods`;
+          periodLimits[cls] = parseInt(document.getElementById(id).value);
+        });
 
-      // Clear form
-      classInput.value = '';
-      daySelect.value = '';
-      periodsContainer.innerHTML = '';
+        const teacherBookedPerPeriod = {};
 
-      setTimeout(() => {
-        addPeriod(); // Add empty period
-      }, 500);
+        classes.forEach((cls) => {
+          const classTitle = document.createElement("h2");
+          classTitle.textContent = `Class: ${cls}`;
+          const wrapper = document.createElement("div");
+          wrapper.id = `wrapper-${cls.replace(/\s/g, "")}`;
+          const table = document.createElement("table");
+          const thead = document.createElement("thead");
+          thead.innerHTML = `
+        <tr>
+          <th>Period</th>
+          <th>Time</th>
+          <th>Teacher</th>
+          <th>Subject</th>
+          <th>Books Name</th>
+        </tr>`;
+          table.appendChild(thead);
 
-    } catch (error) {
-      console.error('Error saving routine:', error);
-      showAlert('saveAlert', `✗ Error saving routine: ${error.message}`, 'error');
-    }
-  }
+          const tbody = document.createElement("tbody");
+          let count = 0;
 
-  async function fetchRoutine() {
-    const day = document.getElementById('fetchDaySelect').value;
-    const container = document.getElementById('routineTableContainer');
-    const fetchAlert = document.getElementById('fetchAlert');
+          for (let { period, time } of allPeriods) {
+            if (period === "Break") {
+              const breakRow = document.createElement("tr");
+              breakRow.className = "break-row";
+              breakRow.innerHTML = `<td colspan="5" class="break-row">Break Time (${time})</td>`;
+              tbody.appendChild(breakRow);
+              continue;
+            }
 
-    container.innerHTML = '';
+            if (count >= periodLimits[cls]) continue;
+            count++;
 
-    if (!day) {
-      showAlert('fetchAlert', 'Please select a day.', 'error');
-      return;
-    }
+            const row = document.createElement("tr");
+            const teacherSelect = document.createElement("select");
+            teacherSelect.setAttribute("aria-label", "Select Teacher");
+            const subjectSelect = document.createElement("select");
+            subjectSelect.setAttribute("aria-label", "Select Subject");
+            const bookInput = document.createElement("input");
+            bookInput.type = "text";
+            bookInput.placeholder = "Enter book name";
 
-    // Get token
-    const token = getAuthToken();
-    if (!token) return;
+            let previousTeacher = null;
 
-    try {
-      console.log('Fetching routine for day:', day);
+            const updateTeacherOptions = () => {
+              const selected = teacherSelect.value;
+              teacherSelect.innerHTML =
+                `<option value="">--Select--</option>` +
+                teachers
+                  .map((t) => {
+                    const booked =
+                      teacherBookedPerPeriod[period]?.has(t) &&
+                      t !== previousTeacher;
+                    const count = teacherCount[t] || 0;
+                    const label = `${t} (${count})`;
+                    return `<option value="${t}" ${
+                      booked ? "disabled" : ""
+                    }>${label}</option>`;
+                  })
+                  .join("");
 
-      // FIXED: Correct authentication header with Bearer token
-      const response = await fetch(
-        `${CONFIG.API_URL}/routines/get-routine?day=${encodeURIComponent(day)}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // FIXED: Proper Bearer token format
-          }
-        }
-      );
+              if (selected) teacherSelect.value = selected;
+            };
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
+            const stripSelectedLabel = () => {
+              const selectedValue = teacherSelect.value;
+              if (!selectedValue) return;
+              Array.from(teacherSelect.options).forEach((opt) => {
+                if (opt.value === selectedValue)
+                  opt.textContent = selectedValue;
+              });
+            };
 
-      const data = await response.json();
-      console.log('Fetched routine data:', data);
+            updateTeacherOptions();
 
-      // FIXED: Correct response parsing - data.routines contains the array
-      if (!data.routines || data.routines.length === 0) {
-        container.innerHTML = `
-          <div class="alert alert-info">
-            <i class="fas fa-info-circle"></i> No routine found for <strong>${day}</strong>.
-          </div>
-        `;
-        return;
-      }
+            teacherSelect.addEventListener("change", (e) => {
+              const selected = e.target.value;
+              teacherBookedPerPeriod[period] =
+                teacherBookedPerPeriod[period] || new Set();
 
-      const routines = data.routines;
-
-      let tableHTML = `
-        <h3>Routines for ${day}</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Class</th>
-              <th>Day</th>
-              <th>Periods</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      routines.forEach(routine => {
-        let periodsDisplay = '';
-        
-        if (Array.isArray(routine.periods)) {
-          periodsDisplay = routine.periods
-            .map(p => {
-              if (typeof p === 'object' && p.name) {
-                return `${p.name} (${p.time || 'N/A'}) - ${p.subject || 'N/A'} by ${p.teacher || 'N/A'}`;
+              if (previousTeacher) {
+                teacherBookedPerPeriod[period].delete(previousTeacher);
+                teacherCount[previousTeacher] =
+                  (teacherCount[previousTeacher] || 1) - 1;
               }
-              return JSON.stringify(p);
-            })
-            .join('<br>');
-        } else if (typeof routine.periods === 'object' && routine.periods !== null) {
-          periodsDisplay = JSON.stringify(routine.periods);
-        } else {
-          periodsDisplay = routine.periods || 'N/A';
-        }
 
-        tableHTML += `
-          <tr>
-            <td><strong>${routine.class}</strong></td>
-            <td>${routine.day}</td>
-            <td>${periodsDisplay}</td>
-          </tr>
+              if (selected) {
+                teacherBookedPerPeriod[period].add(selected);
+                teacherCount[selected] = (teacherCount[selected] || 0) + 1;
+                previousTeacher = selected;
+              } else {
+                previousTeacher = null;
+              }
+
+              document.querySelectorAll("select").forEach((sel) => {
+                if (sel !== teacherSelect && sel.options.length > 1) {
+                  const event = new Event("teacher-update");
+                  sel.dispatchEvent(event);
+                }
+              });
+            });
+
+            teacherSelect.addEventListener("focus", updateTeacherOptions);
+            teacherSelect.addEventListener("blur", stripSelectedLabel);
+
+            subjectSelect.innerHTML =
+              `<option value="">--Select--</option>` +
+              subjects
+                .map((s) => `<option value="${s}">${s}</option>`)
+                .join("");
+
+            row.innerHTML = `
+          <td>${period}</td>
+          <td>${time}</td>
+          <td></td>
+          <td></td>
+          <td></td>
         `;
-      });
+            row.children[2].appendChild(teacherSelect);
+            row.children[3].appendChild(subjectSelect);
+            row.children[4].appendChild(bookInput);
+            tbody.appendChild(row);
+          }
 
-      tableHTML += `
-          </tbody>
-        </table>
-      `;
+          table.appendChild(tbody);
 
-      container.innerHTML = tableHTML;
-      showAlert('fetchAlert', `✓ Found ${routines.length} routine(s) for ${day}`, 'success');
+          const actionDiv = document.createElement("div");
+          actionDiv.className = "action-buttons";
 
-    } catch (error) {
-      console.error('Error fetching routine:', error);
-      showAlert('fetchAlert', `✗ Error fetching routine: ${error.message}`, 'error');
-    }
-  }
+          const saveBtn = document.createElement("button");
+          saveBtn.textContent = "Save Routine";
 
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', () => {
-    // Check authentication
-    const token = localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN);
-    if (!token) {
-      document.body.innerHTML = `
-        <div class="container" style="text-align: center; margin-top: 50px;">
-          <h2>Authentication Required</h2>
-          <p>Please log in first to access this page.</p>
-          <button class="btn btn-custom" onclick="window.location.href='pages/login.html'">
-            <i class="fas fa-sign-in-alt"></i> Go to Login
-          </button>
-        </div>
-      `;
-      return;
-    }
+          saveBtn.onclick = () => {
+            const data = [];
+            const selectedDay = dropdown.value;
 
-    // Add initial empty period
-    addPeriod();
-  });
-</script>
+            Array.from(tbody.rows).forEach((row) => {
+              if (row.classList.contains("break-row")) return;
+              const teacher = row.cells[2].querySelector("select").value;
+              const subject = row.cells[3].querySelector("select").value;
+              const book = row.cells[4].querySelector("input").value;
+              data.push({
+                period: row.cells[0].textContent,
+                time: row.cells[1].textContent,
+                teacher,
+                subject,
+                book,
+              });
+            });
 
-</body>
+            const routinePayload = {
+              class: cls,
+              day: selectedDay, // Send the selectedDay directly
+              periods: data, // Send the array of periods directly
+            };
+
+            console.log("Sending Routine:", routinePayload); // Log to console
+
+            fetch(
+              "https://skyview-server-4-0.vercel.app/api/routines/save-routine",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(routinePayload),
+              }
+            )
+              .then((response) => {
+                if (!response.ok) throw new Error("Failed to save routine.");
+                return response.json();
+              })
+              .then((result) => {
+                alert(`Routine for ${selectedDay} saved successfully!`);
+                console.log("Backend response:", result);
+              })
+              .catch((error) => {
+                console.error("Error saving routine:", error);
+                alert("Error saving routine. Please try again.");
+              });
+          };
+
+          const pdfBtn = document.createElement("button");
+          pdfBtn.textContent = "Download PDF";
+          pdfBtn.onclick = () => {
+            const opt = {
+              margin: 0.3,
+              filename: `${cls}-Routine.pdf`,
+              image: { type: "jpeg", quality: 1 },
+              html2canvas: { scale: 4 },
+              jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+            };
+            html2pdf().set(opt).from(wrapper).save();
+          };
+
+          actionDiv.appendChild(saveBtn);
+          actionDiv.appendChild(pdfBtn);
+          wrapper.appendChild(classTitle);
+          wrapper.appendChild(table);
+          wrapper.appendChild(actionDiv);
+          tablesContainer.appendChild(wrapper);
+        });
+      }
+
+      document
+        .getElementById("exportExcelBtn")
+        .addEventListener("click", () => {
+          const wb = XLSX.utils.book_new();
+
+          const includeTeacher =
+            document.getElementById("teacherCheck").checked;
+          const includeSubject =
+            document.getElementById("subjectCheck").checked;
+          const includeBook = document.getElementById("bookCheck").checked;
+
+          const allPeriods = new Set();
+          const classPeriodDataMap = {};
+          const teacherDataMap = {};
+
+          classes.forEach((className) => {
+            const wrapperId = `wrapper-${className.replace(/\s/g, "")}`;
+            const wrapper = document.getElementById(wrapperId);
+            if (!wrapper) return;
+
+            const rows = wrapper.querySelectorAll("tbody tr");
+
+            classPeriodDataMap[className] = {};
+
+            rows.forEach((row) => {
+              if (row.classList.contains("break-row")) return;
+
+              const period = row.cells[0].textContent.trim();
+              const teacher = row.cells[2].querySelector("select")?.value || "";
+              const subject =
+                row.cells[3]?.querySelector("select")?.value || "";
+              const book = row.cells[4]?.querySelector("input")?.value || "";
+
+              allPeriods.add(period);
+
+              classPeriodDataMap[className][period] = {
+                teacher,
+                subject,
+                book,
+              };
+
+              // Build teacher data map
+              if (teacher) {
+                if (!teacherDataMap[teacher]) {
+                  teacherDataMap[teacher] = {
+                    subjects: new Set(),
+                    periods: [],
+                  };
+                }
+                if (subject) teacherDataMap[teacher].subjects.add(subject);
+                teacherDataMap[teacher].periods.push(
+                  `${className} - ${period}`
+                );
+              }
+            });
+          });
+
+          const periods = Array.from(allPeriods);
+
+          // Sheet 1: Class-wise Routine
+          const routineSheetData = [["Class", ...periods]];
+
+          classes.forEach((className) => {
+            const row = [className];
+            periods.forEach((period) => {
+              const data = classPeriodDataMap[className]?.[period];
+              let cellText = "";
+              if (data) {
+                const parts = [];
+                if (includeTeacher && data.teacher) parts.push(data.teacher);
+                if (includeSubject && data.subject) parts.push(data.subject);
+                if (includeBook && data.book) parts.push(data.book);
+                cellText = parts.join("\n");
+              }
+              row.push(cellText);
+            });
+            routineSheetData.push(row);
+          });
+
+          // Free Teachers Row
+          const allTeachersSet = new Set(teachers);
+          const freeRow = ["Free Teachers"];
+          periods.forEach((period) => {
+            const engagedTeachers = new Set();
+            classes.forEach((className) => {
+              const data = classPeriodDataMap[className]?.[period];
+              if (data && data.teacher) {
+                engagedTeachers.add(data.teacher);
+              }
+            });
+            const freeTeachers = [...allTeachersSet].filter(
+              (t) => !engagedTeachers.has(t)
+            );
+            freeRow.push(freeTeachers.join(", "));
+          });
+
+          routineSheetData.push(freeRow);
+
+          const ws1 = XLSX.utils.aoa_to_sheet(routineSheetData);
+          XLSX.utils.book_append_sheet(wb, ws1, "Class-wise Routine");
+
+          // Sheet 2: Teacher-wise Summary
+          const teacherSummaryData = [
+            ["Teacher", "Subjects", "Assigned Periods"],
+          ];
+
+          Object.entries(teacherDataMap).forEach(([teacher, info]) => {
+            const subjects = Array.from(info.subjects).join(", ");
+            const periods = info.periods.join(", ");
+            teacherSummaryData.push([teacher, subjects, periods]);
+          });
+
+          const ws2 = XLSX.utils.aoa_to_sheet(teacherSummaryData);
+          XLSX.utils.book_append_sheet(wb, ws2, "Teacher-wise Summary");
+
+          // Export
+          XLSX.writeFile(wb, "Routine_With_Teacher_Summary.xlsx");
+        });
+
+      // window.onload = createSettings;
+
+      // Add a button to fetch and display routine by day
+      const fetchRoutineBtn = document.createElement("button");
+      fetchRoutineBtn.textContent = "Fetch Routine for Selected Day";
+      fetchRoutineBtn.id = "fetchRoutineBtn";
+      settingsDiv.appendChild(fetchRoutineBtn);
+
+      fetchRoutineBtn.onclick = () => {
+        const selectedDay = dropdown.value;
+      
+        fetch(
+          `https://skyview-server-4-0.vercel.app/api/routines/get-routine?day=${selectedDay}`
+        )
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(
+                `Failed to fetch routine for ${selectedDay}. Status: ${response.status}`
+              );
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Fetched Routine Data:", data);
+            
+          })
+          .catch((error) => {
+            console.error("Error fetching routine:", error);
+            alert(
+              `Error fetching routine for ${selectedDay}. Please try again.`
+            );
+            // Optionally clear the displayed routine or show an error message in the UI
+            tablesContainer.innerHTML = `<p class="error-message">Error fetching routine for ${selectedDay}.</p>`;
+          });
+      };
+
+   
+      window.onload = () => {
+        createSettings();
+      };
+
+      // teacher wise day routine
+
+      document
+        .getElementById("exportExcelBtnt")
+        .addEventListener("click", () => {
+          const wb = XLSX.utils.book_new();
+          const teacherWiseData = {};
+          const selectedDay = document.getElementById("days").value;
+
+          const includeClass = true; // Always include class
+          const includeSubject = true; // Always include subject
+          const includeBook = true; // Always include book
+
+          classes.forEach((className) => {
+            const wrapperId = `wrapper-${className.replace(/\s/g, "")}`;
+            const wrapper = document.getElementById(wrapperId);
+            if (!wrapper) return;
+
+            const rows = wrapper.querySelectorAll("tbody tr");
+
+            rows.forEach((row) => {
+              if (row.classList.contains("break-row")) return;
+
+              const period = row.cells[0].textContent.trim();
+              const time = row.cells[1].textContent.trim();
+              const teacher = row.cells[2].querySelector("select")?.value || "";
+              const subject =
+                row.cells[3]?.querySelector("select")?.value || "";
+              const book = row.cells[4]?.querySelector("input")?.value || "";
+
+              if (teacher) {
+                if (!teacherWiseData[teacher]) {
+                  teacherWiseData[teacher] = [];
+                }
+                const periodInfo = {
+                  Period: period,
+                  Time: time,
+                  Class: className,
+                  Subject: subject, // Include subject by default
+                  "Book Name": book, // Include book name by default
+                };
+
+                teacherWiseData[teacher].push(periodInfo);
+              }
+            });
+          });
+
+          for (const teacher in teacherWiseData) {
+            if (teacherWiseData.hasOwnProperty(teacher)) {
+              const teacherSchedule = teacherWiseData[teacher];
+              if (teacherSchedule.length > 0) {
+                // Create header row
+                const header = Object.keys(teacherSchedule[0]);
+                const dataRows = [
+                  header,
+                  ...teacherSchedule.map((schedule) => Object.values(schedule)),
+                ];
+                const ws = XLSX.utils.aoa_to_sheet(dataRows);
+                XLSX.utils.book_append_sheet(wb, ws, teacher);
+              } else {
+                const ws = XLSX.utils.aoa_to_sheet([
+                  ["No classes assigned for this day."],
+                ]);
+                XLSX.utils.book_append_sheet(wb, ws, teacher);
+              }
+            }
+          }
+
+          XLSX.writeFile(wb, `Teacher_Wise_Routine_${selectedDay}.xlsx`);
+        });
+    </script>
+  </body>
 </html>
