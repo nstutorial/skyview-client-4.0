@@ -65,6 +65,12 @@ h2 {
       input:disabled {
         background-color: #ddd;
       }
+      /* Keep teacher dropdown width stable even when showing "(count)" */
+      select[aria-label="Select Teacher"] {
+        min-width: 130px;
+        max-width: 130px;
+        box-sizing: border-box;
+      }
       .settings {
   margin-bottom: 30px;
   background-color: #f1f3f5;
@@ -229,6 +235,18 @@ button#fetchRoutineBtn:hover {
         "Ranjit",
         "Sujata",
       ];
+      // Helper to strip "(count)" labels from all teacher selects
+      function stripAllTeacherLabels() {
+        document
+          .querySelectorAll('select[aria-label="Select Teacher"]')
+          .forEach((sel) => {
+            Array.from(sel.options).forEach((opt) => {
+              if (!opt.value) return;
+              // Keep just the teacher name (value)
+              opt.textContent = opt.value;
+            });
+          });
+      }
       const subjects = [
         "Math",
         "English",
@@ -277,6 +295,13 @@ button#fetchRoutineBtn:hover {
       ];
       const settingsDiv = document.getElementById("settings");
       const tablesContainer = document.getElementById("routineTables");
+
+      // When clicking anywhere outside a select, hide all "(count)" labels
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest("select")) {
+          stripAllTeacherLabels();
+        }
+      });
 
       function createSettings() {
         classes.forEach((cls) => {
@@ -383,6 +408,8 @@ button#fetchRoutineBtn:hover {
             };
 
             updateTeacherOptions();
+            // Show plain teacher name when not interacting
+            stripSelectedLabel();
 
             teacherSelect.addEventListener("change", (e) => {
               const selected = e.target.value;
@@ -468,7 +495,8 @@ button#fetchRoutineBtn:hover {
             console.log("Sending Routine:", routinePayload); // Log to console
 
             fetch(
-              "https://skyview-server-4-0.vercel.app/api/routines/save-routine",
+              `http://localhost:5000/api/routines/save-routine`,
+              // "https://skyview-server-4-0.vercel.app/api/routines/save-routine",
               {
                 method: "POST",
                 headers: {
@@ -642,9 +670,11 @@ button#fetchRoutineBtn:hover {
 
       fetchRoutineBtn.onclick = () => {
         const selectedDay = dropdown.value;
-      
+
         fetch(
-          `https://skyview-server-4-0.vercel.app/api/routines/get-routine?day=${selectedDay}`
+          `http://localhost:5000/api/routines/get-routine?day=${encodeURIComponent(
+            selectedDay
+          )}`
         )
           .then((response) => {
             if (!response.ok) {
@@ -656,7 +686,281 @@ button#fetchRoutineBtn:hover {
           })
           .then((data) => {
             console.log("Fetched Routine Data:", data);
-            
+
+            // Clear existing tables
+            tablesContainer.innerHTML = "";
+
+            // Normalize response into an array of routines
+            let routinesArray = [];
+
+            if (Array.isArray(data)) {
+              routinesArray = data;
+            } else if (Array.isArray(data.routines)) {
+              routinesArray = data.routines;
+            } else if (data.routine) {
+              routinesArray = Array.isArray(data.routine)
+                ? data.routine
+                : [data.routine];
+            }
+
+            if (!routinesArray || routinesArray.length === 0) {
+              tablesContainer.innerHTML = `<p class="error-message">No routine found for ${selectedDay}.</p>`;
+              return;
+            }
+
+            // Track counts and per-period bookings for fetched view
+            const teacherCount = {};
+            const teacherBookedPerPeriod = {};
+
+            routinesArray.forEach((routineItem) => {
+              const cls =
+                routineItem.class ||
+                routineItem.className ||
+                routineItem.class_id ||
+                "Unknown Class";
+
+              // For this selected day, try to extract an array of periods
+              let periods = [];
+              if (Array.isArray(routineItem.periods)) {
+                periods = routineItem.periods;
+              } else if (
+                routineItem.routines &&
+                Array.isArray(routineItem.routines[selectedDay])
+              ) {
+                periods = routineItem.routines[selectedDay];
+              }
+
+              if (!periods || periods.length === 0) return;
+
+              const classTitle = document.createElement("h2");
+              classTitle.textContent = `Class: ${cls} (${selectedDay})`;
+
+              const wrapper = document.createElement("div");
+              const table = document.createElement("table");
+              const thead = document.createElement("thead");
+              thead.innerHTML = `
+                <tr>
+                  <th>Period</th>
+                  <th>Time</th>
+                  <th>Teacher</th>
+                  <th>Subject</th>
+                  <th>Books Name</th>
+                </tr>`;
+              table.appendChild(thead);
+
+              const tbody = document.createElement("tbody");
+
+              periods.forEach((p) => {
+                if (p.period === "Break") {
+                  const breakRow = document.createElement("tr");
+                  breakRow.className = "break-row";
+                  breakRow.innerHTML = `<td colspan="5" class="break-row">Break Time (${p.time || ""})</td>`;
+                  tbody.appendChild(breakRow);
+                  return;
+                }
+
+                const row = document.createElement("tr");
+
+                // Teacher select with count + conflict disabling (same logic as generateRoutine)
+                let previousTeacher = null;
+
+                const teacherSelect = document.createElement("select");
+                teacherSelect.setAttribute("aria-label", "Select Teacher");
+                const updateTeacherOptions = () => {
+                  const selected = teacherSelect.value || p.teacher || "";
+                  teacherSelect.innerHTML =
+                    `<option value="">--Select--</option>` +
+                    teachers
+                      .map((t) => {
+                        const booked =
+                          teacherBookedPerPeriod[p.period]?.has(t) &&
+                          t !== previousTeacher;
+                        const count = teacherCount[t] || 0;
+                        const label = `${t} (${count})`;
+                        return `<option value="${t}" ${
+                          booked ? "disabled" : ""
+                        }>${label}</option>`;
+                      })
+                      .join("");
+
+                  if (selected) teacherSelect.value = selected;
+                };
+
+                const stripSelectedLabel = () => {
+                  const selectedValue = teacherSelect.value;
+                  if (!selectedValue) return;
+                  Array.from(teacherSelect.options).forEach((opt) => {
+                    if (opt.value === selectedValue)
+                      opt.textContent = selectedValue;
+                  });
+                };
+
+                // Initialize per-period teacher bookings and global counts based on existing data
+                if (p.teacher) {
+                  teacherBookedPerPeriod[p.period] =
+                    teacherBookedPerPeriod[p.period] || new Set();
+                  teacherBookedPerPeriod[p.period].add(p.teacher);
+                  teacherCount[p.teacher] = (teacherCount[p.teacher] || 0) + 1;
+                  previousTeacher = p.teacher;
+                }
+
+                updateTeacherOptions();
+                // Show plain teacher name when not interacting
+                stripSelectedLabel();
+
+                teacherSelect.addEventListener("change", (e) => {
+                  const selected = e.target.value;
+                  teacherBookedPerPeriod[p.period] =
+                    teacherBookedPerPeriod[p.period] || new Set();
+
+                  if (previousTeacher) {
+                    teacherBookedPerPeriod[p.period].delete(previousTeacher);
+                    teacherCount[previousTeacher] =
+                      (teacherCount[previousTeacher] || 1) - 1;
+                  }
+
+                  if (selected) {
+                    teacherBookedPerPeriod[p.period].add(selected);
+                    teacherCount[selected] = (teacherCount[selected] || 0) + 1;
+                    previousTeacher = selected;
+                  } else {
+                    previousTeacher = null;
+                  }
+
+                  document.querySelectorAll("select").forEach((sel) => {
+                    if (sel !== teacherSelect && sel.options.length > 1) {
+                      const event = new Event("teacher-update");
+                      sel.dispatchEvent(event);
+                    }
+                  });
+                });
+
+                teacherSelect.addEventListener("focus", updateTeacherOptions);
+                teacherSelect.addEventListener("blur", stripSelectedLabel);
+                teacherSelect.addEventListener(
+                  "teacher-update",
+                  updateTeacherOptions
+                );
+
+                // Subject select
+                const subjectSelect = document.createElement("select");
+                subjectSelect.setAttribute("aria-label", "Select Subject");
+                subjectSelect.innerHTML =
+                  `<option value="">--Select--</option>` +
+                  subjects
+                    .map(
+                      (s) =>
+                        `<option value="${s}" ${
+                          p.subject === s ? "selected" : ""
+                        }>${s}</option>`
+                    )
+                    .join("");
+
+                // Book input
+                const bookInput = document.createElement("input");
+                bookInput.type = "text";
+                bookInput.placeholder = "Enter book name";
+                bookInput.value = p.book || "";
+
+                row.innerHTML = `
+                  <td>${p.period || ""}</td>
+                  <td>${p.time || ""}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                `;
+
+                row.children[2].appendChild(teacherSelect);
+                row.children[3].appendChild(subjectSelect);
+                row.children[4].appendChild(bookInput);
+
+                tbody.appendChild(row);
+              });
+
+              table.appendChild(tbody);
+
+              // Action buttons (Save + PDF) same as generateRoutine tables
+              const actionDiv = document.createElement("div");
+              actionDiv.className = "action-buttons";
+
+              const saveBtn = document.createElement("button");
+              saveBtn.textContent = "Save Routine";
+              saveBtn.onclick = () => {
+                const dataToSave = [];
+
+                Array.from(tbody.rows).forEach((row) => {
+                  if (row.classList.contains("break-row")) return;
+                  const teacher =
+                    row.cells[2].querySelector("select")?.value || "";
+                  const subject =
+                    row.cells[3].querySelector("select")?.value || "";
+                  const book =
+                    row.cells[4].querySelector("input")?.value || "";
+
+                  dataToSave.push({
+                    period: row.cells[0].textContent,
+                    time: row.cells[1].textContent,
+                    teacher,
+                    subject,
+                    book,
+                  });
+                });
+
+                const routinePayload = {
+                  class: cls,
+                  day: selectedDay,
+                  periods: dataToSave,
+                };
+
+                console.log("Saving Edited Routine:", routinePayload);
+
+                fetch("http://localhost:5000/api/routines/save-routine", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(routinePayload),
+                })
+                  .then((response) => {
+                    if (!response.ok)
+                      throw new Error("Failed to save routine.");
+                    return response.json();
+                  })
+                  .then((result) => {
+                    alert(`Routine for ${selectedDay} saved successfully!`);
+                    console.log("Backend response:", result);
+                  })
+                  .catch((error) => {
+                    console.error("Error saving routine:", error);
+                    alert("Error saving routine. Please try again.");
+                  });
+              };
+
+              const pdfBtn = document.createElement("button");
+              pdfBtn.textContent = "Download PDF";
+              pdfBtn.onclick = () => {
+                const opt = {
+                  margin: 0.3,
+                  filename: `${cls}-Routine-${selectedDay}.pdf`,
+                  image: { type: "jpeg", quality: 1 },
+                  html2canvas: { scale: 4 },
+                  jsPDF: {
+                    unit: "in",
+                    format: "letter",
+                    orientation: "portrait",
+                  },
+                };
+                html2pdf().set(opt).from(wrapper).save();
+              };
+
+              actionDiv.appendChild(saveBtn);
+              actionDiv.appendChild(pdfBtn);
+
+              wrapper.appendChild(classTitle);
+              wrapper.appendChild(table);
+              wrapper.appendChild(actionDiv);
+              tablesContainer.appendChild(wrapper);
+            });
           })
           .catch((error) => {
             console.error("Error fetching routine:", error);
