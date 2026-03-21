@@ -862,7 +862,12 @@
                     examConfig = savedConfig;
                 } else {
                     const data = await response.json();
-                    examConfig = data;
+                    // examConfig = data;
+                    if (data?.examConfigs?.length) {
+    examConfig = data;
+} else {
+    console.warn("Invalid config from DB");
+}
                 }
 
                 console.log('Using exam config:', examConfig);
