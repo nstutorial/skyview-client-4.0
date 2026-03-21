@@ -893,34 +893,44 @@
                 total: currentConfig.maxMarksWritten + currentConfig.maxMarksOral
             };
         }
-        async function updatePromotionClass() {
-            const promotionMap = {
-                "NURSERY": "LKG",
-                "LKG": "UKG",
-                "UKG": "I",
-                "I": "II",
-                "II": "III",
-                "III": "IV",
-                "IV": "V",
-                "V": "VI",
-                "VI": "VII",
-                "VII": "VIII",
-                "VIII": "IX",
-                "IX": "X",
-                "X": "XI",
-                "XI": "XII",
-                "XII": "PASS OUT"
-            };
+      function updatePromotionClass() {
+    const promotionMap = {
+        "NURSERY": "LKG",
+        "LKG": "UKG",
+        "UKG": "I",
+        "I": "II",
+        "CLASS-I": "II",
+        "1": "II",
+        "II": "III",
+        "CLASS-II": "III",
+        "2": "III",
+        "III": "IV",
+        "IV": "V",
+        "V": "VI",
+        "VI": "VII",
+        "VII": "VIII",
+        "VIII": "IX",
+        "IX": "X",
+        "X": "XI",
+        "XI": "XII",
+        "XII": "GRADUATED"
+    };
 
-            const classInput = document.getElementById('className');
-            const promotionInput = document.getElementById('promotedTo');
+    const promotionInput = document.getElementById('promotedTo');
+    const classInput = document.getElementById('className');
 
-            if (classInput && promotionInput) {
-                const selectedClass = classInput.textContent.toUpperCase();
-                promotionInput.textContent = promotionMap[selectedClass] || "-";
-            }
-        }
-
+    if (promotionInput && classInput) {
+        // Get the text, make it uppercase, and remove extra spaces
+        let currentClass = classInput.textContent.trim().toUpperCase();
+        
+        // Logic to find the next class
+        let nextClass = promotionMap[currentClass] || "-";
+        
+        // Update the display
+        promotionInput.textContent = nextClass;
+        console.log("Promotion updated from", currentClass, "to", nextClass);
+    }
+}
         // // Load marksheet data when page loads
         // document.addEventListener('DOMContentLoaded', async () => {
         //     const urlParams = new URLSearchParams(window.location.search);
