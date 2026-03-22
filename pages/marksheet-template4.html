@@ -866,6 +866,7 @@
                     if (data?.examConfigs?.length) {
     examConfig = data;
 } else {
+                        examConfig = defaultConfig; // fallback
     console.warn("Invalid config from DB");
 }
                 }
@@ -1016,7 +1017,9 @@
     document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     studentId = urlParams.get('studentId');
-    className = urlParams.get('className') || urlParams.get('class'); 
+    className = normalizeClassName(
+    urlParams.get('className') || urlParams.get('class')
+);
     section = urlParams.get('section');
     rollNo = urlParams.get('rollNo');
     const studentName = urlParams.get('studentName');
@@ -1107,6 +1110,32 @@
     }
 });
 
+function normalizeClassName(name) {
+    if (!name) return "";
+
+    name = name.toUpperCase().trim();
+
+    const map = {
+        "1": "CLASS-I",
+        "I": "CLASS-I",
+        "CLASS I": "CLASS-I",
+
+        "2": "CLASS-II",
+        "II": "CLASS-II",
+        "CLASS II": "CLASS-II",
+
+        "3": "CLASS-III",
+        "III": "CLASS-III",
+        "CLASS III": "CLASS-III",
+
+        "4": "CLASS-IV",
+        "IV": "CLASS-IV",
+        "CLASS IV": "CLASS-IV"
+    };
+
+    return map[name] || name;
+}
+        
         // Add event listeners for attendance calculation
         document.getElementById('totalDays').addEventListener('input', updateAttendancePercentage);
         document.getElementById('daysPresent').addEventListener('input', updateAttendancePercentage);
